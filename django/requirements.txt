@@ -1,0 +1,15 @@
+# Framework — version compatible mongoengine
+django==4.2.13
+
+# Connecteur MongoDB pour Django (remplace djongo, bien plus maintenu)
+mongoengine==0.28.2
+pymongo==4.7.2
+
+# Formulaires & vues
+django-crispy-forms==2.1
+
+# Variables d'environnement
+python-dotenv==1.0.1
+
+# API REST avec Django
+djangorestframework==3.15.1

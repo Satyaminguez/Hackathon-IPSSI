@@ -1,0 +1,211 @@
+
+# =============================================================================
+#  STACK COMPLÈTE - HKT IPSSI
+#  • PostgreSQL  → métadonnées internes d'Airflow (ne pas toucher)
+#  • MongoDB     → base de données de l'application (documents, OCR, etc.)
+#  • Airflow     → orchestration des pipelines (webserver + scheduler)
+#  • FastAPI     → API principale (traitement, OCR, validation)
+#  • Django      → back-office / outil conformité
+#  • React       → front-end
+# =============================================================================
+
+services:
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PostgreSQL — RÉSERVÉ à Airflow, ne pas utiliser pour l'appli
+  # ─────────────────────────────────────────────────────────────────────────
+  airflow-postgres:
+    image: postgres:16
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - hkt-network
+    # Port non exposé volontairement (inutile d'y accéder depuis l'hôte)
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # MongoDB — Base de données de l'APPLICATION
+  # Accès : mongodb://admin:admin@localhost:27017
+  # ─────────────────────────────────────────────────────────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: hkt-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: hkt_db       # BDD créée automatiquement au 1er démarrage
+    ports:
+      - "27017:27017"                      # Accessible depuis l'hôte (ex: MongoDB Compass)
+    volumes:
+      - mongo-db-volume:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+    networks:
+      - hkt-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Airflow — Webserver (Interface UI sur http://localhost:8080)
+  # Login : admin / admin
+  # ─────────────────────────────────────────────────────────────────────────
+  airflow-webserver:
+    image: apache/airflow:2.9.3
+    container_name: hkt-airflow-webserver
+    depends_on:
+      airflow-postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
+      AIRFLOW__WEBSERVER__SECRET_KEY: "hkt_secret_key_2026"
+      AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth
+      # Donne accès à MongoDB depuis les DAGs
+      MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
+    volumes:
+      - ./dags:/opt/airflow/dags       # Tes DAGs Python ici
+      - ./logs:/opt/airflow/logs
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+        airflow db migrate &&
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com || true &&
+        airflow webserver
+      "
+    restart: unless-stopped
+    networks:
+      - hkt-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Airflow — Scheduler (exécute les DAGs en arrière-plan)
+  # ─────────────────────────────────────────────────────────────────────────
+  airflow-scheduler:
+    image: apache/airflow:2.9.3
+    container_name: hkt-airflow-scheduler
+    depends_on:
+      airflow-postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
+      AIRFLOW__WEBSERVER__SECRET_KEY: "hkt_secret_key_2026"
+      MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    command: >
+      bash -c "
+        airflow db migrate &&
+        airflow scheduler
+      "
+    restart: unless-stopped
+    networks:
+      - hkt-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # FastAPI — API principale
+  # Accès : http://localhost:8000
+  # Docs Swagger : http://localhost:8000/docs
+  # ─────────────────────────────────────────────────────────────────────────
+  fastapi:
+    build:
+      context: ./fastapi          # Dossier contenant ton Dockerfile FastAPI
+      dockerfile: Dockerfile
+    container_name: hkt-fastapi
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
+      AIRFLOW_URL: http://airflow-webserver:8080
+      AIRFLOW_USER: admin
+      AIRFLOW_PASSWORD: admin
+    volumes:
+      - ./fastapi:/app              # Hot-reload : tes modifs sont prises en compte à chaud
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    networks:
+      - hkt-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Django — Back-office / Outil conformité
+  # Accès : http://localhost:8001
+  # Admin Django : http://localhost:8001/admin
+  # ─────────────────────────────────────────────────────────────────────────
+  django:
+    build:
+      context: ./django             # Dossier contenant ton Dockerfile Django
+      dockerfile: Dockerfile
+    container_name: hkt-django
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
+      DJANGO_SECRET_KEY: "django_secret_key_hkt_2026"
+      DEBUG: "true"
+    volumes:
+      - ./django:/app
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    networks:
+      - hkt-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # React — Front-end
+  # Accès : http://localhost:3000
+  # ─────────────────────────────────────────────────────────────────────────
+  react:
+    image: node:20-alpine
+    container_name: hkt-react
+    working_dir: /app
+    volumes:
+      - ./frontend:/app             # Ton projet React ici (create-react-app ou Vite)
+    ports:
+      - "3000:3000"
+    environment:
+      # URL de l'API FastAPI appelée depuis le navigateur (pas depuis Docker)
+      REACT_APP_API_URL: http://localhost:8000
+      CHOKIDAR_USEPOLLING: "true"   # Hot-reload fiable sous Docker
+    command: sh -c "npm install && npm start"
+    restart: unless-stopped
+    networks:
+      - hkt-network
+
+# =============================================================================
+# Volumes & Réseau
+# =============================================================================
+volumes:
+  postgres-db-volume:
+    driver: local
+  mongo-db-volume:
+    driver: local
+
+networks:
+  hkt-network:
+    driver: bridge
