@@ -19,10 +19,6 @@
   }
 }
 
-* {
-    user-select: none;
-}
-
 i,
 img {
     cursor: pointer;

@@ -95,7 +95,6 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-6 relative overflow-hidden">
       {/* Background Decor */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-teal-600/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
       
       {loading && <Loader />}
@@ -103,16 +102,10 @@ export default function Register() {
       <ToastContainer theme="dark" position="bottom-right" />
 
       <div className="w-full max-w-md relative z-10 transition-all duration-500 animate-in fade-in slide-in-from-bottom-8">
-        <div className="text-center mb-8">
-          {/* <div className="inline-flex items-center justify-center w-14 h-14 bg-teal-600 rounded-2xl shadow-lg shadow-teal-500/20 mb-4">
-            <ShieldCheck className="text-white" size={28} />
-          </div> */}
-          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">DocSafe AI</h1>
-          <p className="text-slate-400">Rejoignez l'élite de la gestion documentaire</p>
-        </div>
+        <div className="text-center mb-8" />
 
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-lg p-8 shadow-2xl">
-          <h2 className="text-xl font-bold text-white mb-6">Créer un Compte</h2>
+          <h2 className="text-xl font-bold text-center text-white mb-6">Créer un Compte</h2>
           
           <form onSubmit={handlerSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -194,7 +187,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-bold py-3.5 rounded-md shadow-lg shadow-teal-600/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2"
+              className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-semibold py-3 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? "..." : "S'inscrire"}
             </button>

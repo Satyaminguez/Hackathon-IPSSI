@@ -9,8 +9,6 @@ function Profile() {
     switch (activeTab) {
       case "personalInfo":
         return <PersonalInfo />;
-      case "invoices":
-        return <Invoices />;
       default:
         return null;
     }
@@ -25,22 +23,11 @@ function Profile() {
           onClick={() => setActiveTab("personalInfo")}
           className={`py-2 pr-2 ${
             activeTab === "personalInfo"
-              ? "border-b-2 border-orange-500 text-orange-500"
+              ? "border-b-2 border-teal-500 text-teal-500"
               : "text-gray-400"
           }`}
         >
           Mes informations personnelles
-        </button>
-
-        <button
-          onClick={() => setActiveTab("invoices")}
-          className={`py-2 pr-2 ${
-            activeTab === "invoices"
-              ? "border-b-2 border-orange-500 text-orange-500"
-              : "text-gray-400"
-          }`}
-        >
-          Mes factures
         </button>
       </div>
 

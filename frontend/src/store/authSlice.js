@@ -33,6 +33,13 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    setRole: (state, action) => {
+      if (state.user) {
+        state.user.role = action.payload;
+      } else {
+        state.user = { role: action.payload, firstname: "Demo", lastname: action.payload === "admin" ? "Admin" : "Client" };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -53,6 +60,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, clearUser } = authSlice.actions;
+export const { clearError, clearUser, setRole } = authSlice.actions;
 
 export default authSlice.reducer;

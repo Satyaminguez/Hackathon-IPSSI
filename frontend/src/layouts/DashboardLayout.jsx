@@ -2,6 +2,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Dashboard/Sidebar";
+import Header from "../components/Dashboard/Header";
 
 function DashboardLayout() {
   return (
@@ -12,8 +13,11 @@ function DashboardLayout() {
       
       <Sidebar />
 
-      <div className="flex-1 p-8 ml-64 relative z-10">
-        <Outlet />
+      <div className="flex-1 ml-64 flex flex-col relative z-10">
+        <Header />
+        <main className="flex-1 p-8">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

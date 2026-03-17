@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserServices from "../../services/UserServices";
 import Loader from "../Loader";
+import { ShieldCheck, Eye, EyeOff, Lock } from "lucide-react";
 
 export default function Reset() {
   const [password, setPassword] = useState("");
@@ -71,9 +72,7 @@ export default function Reset() {
         setLoading(true);
         const userServices = new UserServices();
 
-        await userServices.resetPassword(token, data).then((resolve) => {
-          
-        });
+        await userServices.resetPassword(token, data);
 
         toast.success("Mot de passe réinitialisé avec succès !");
         setLoading(false);
@@ -86,97 +85,84 @@ export default function Reset() {
   }
 
   return (
-    <div className="flex justify-center text-gray-600">
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-6 relative overflow-hidden text-slate-300">
+      {/* Background Decor */}
+      <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+      
       {loading && <Loader />}
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-      />
-      <div className="shadow bg-white p-4 mt-8 max-w-md sm:mx-4">
-        <h1 className="font-bold text-xl md:text-2xl">
-          Réinitialiser le mot de passe
-        </h1>
-        <p className="text-gray-500">
-          Veuillez entrer et confirmer votre nouveau mot de passe
-        </p>
-        <div className="w-full rounded-lg divide-y divide-gray-200">
-          <div className="pt-7 pb-3">
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4 relative">
-                <label className="block text-sm font-semibold mb-2">
-                  Mot de passe
-                </label>
+      <ToastContainer theme="dark" position="bottom-right" />
+
+      <div className="w-full max-w-md relative z-10 transition-all duration-500 animate-in fade-in slide-in-from-bottom-8">
+        <div className="text-center mb-10" />
+
+        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-lg p-8 shadow-2xl">
+          <h2 className="text-xl font-bold text-white mb-2">Nouveau mot de passe</h2>
+          <p className="text-slate-400 text-sm mb-6">
+            Définissez votre nouvelle clé d'accès sécurisée.
+          </p>
+          
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Nouveau mot de passe
+              </label>
+              <div className="relative group">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
                 <input
                   type={showPassword ? "text" : "password"}
-                  name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full p-3 text-sm border border-gray-300 focus:outline-none focus:border-slate-600 transition duration-200 ${
-                    errors.password ? "border-red-600 focus:border-red-500" : ""
-                  }`}
-                  placeholder="*********"
+                  className={`w-full bg-slate-950 border ${errors.password ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                  placeholder="••••••••"
                 />
-                <i
-                  className={`i-auth ${
-                    showPassword
-                      ? "fa-regular fa-eye-slash"
-                      : "fa-regular fa-eye"
-                  }`}
-                  onClick={() => setShowPassword(!showPassword)}
-                ></i>
-                {errors.password && (
-                  <small className="text-red-600 text-xs">
-                    {errors.password}
-                  </small>
-                )}
-              </div>
-
-              <div className="mb-4 relative">
-                <label className="block text-sm font-semibold mb-2">
-                  Confirmer le mot de passe
-                </label>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full p-3 text-sm border border-gray-300 focus:outline-none focus:border-slate-600 transition duration-200 ${
-                    errors.confirmPassword
-                      ? "border-red-600 focus:border-red-500"
-                      : ""
-                  }`}
-                  placeholder="*********"
-                />
-                <i
-                  className={`i-auth ${
-                    showConfirmPassword
-                      ? "fa-regular fa-eye-slash"
-                      : "fa-regular fa-eye"
-                  }`}
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                ></i>
-                {errors.confirmPassword && (
-                  <small className="text-red-600 text-xs">
-                    {errors.confirmPassword}
-                  </small>
-                )}
-              </div>
-
-              <div className="text-right mb-4">
                 <button
-                  type="submit"
-                  className="w-full py-3 px-4 bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-200"
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
                 >
-                  Réinitialiser le mot de passe
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-            </form>
-          </div>
+              {errors.password && <p className="mt-1 text-xs text-red-500 font-medium">{errors.password}</p>}
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Confirmer le mot de passe
+              </label>
+              <div className="relative group">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`w-full bg-slate-950 border ${errors.confirmPassword ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {errors.confirmPassword && <p className="mt-1 text-xs text-red-500 font-medium">{errors.confirmPassword}</p>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-bold py-3.5 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              {loading ? "..." : "Réinitialiser"}
+            </button>
+          </form>
         </div>
+
+        <p className="mt-8 text-center text-slate-600 text-xs text-balance">
+          &copy; 2024 DocSafe AI. Sécurité de niveau entreprise. ISO 27001 compliant.
+        </p>
       </div>
     </div>
   );

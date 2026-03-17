@@ -65,7 +65,6 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-6 relative overflow-hidden">
       {/* Background Decor */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-teal-600/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
       
       {loading && <Loader />}
@@ -73,13 +72,7 @@ export default function Login() {
       <ToastContainer theme="dark" position="bottom-right" />
 
       <div className="w-full max-w-md relative z-10 transition-all duration-500 animate-in fade-in slide-in-from-bottom-8">
-        <div className="text-center mb-10">
-          {/* <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-2xl shadow-lg shadow-teal-500/20 mb-6">
-            <ShieldCheck className="text-white" size={32} />
-          </div> */}
-          <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">DocSafe AI</h1>
-          <p className="text-slate-400">Plateforme Intelligente de Gestion de Documents</p>
-        </div>
+        <div className="text-center mb-10" />
 
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-lg p-8 shadow-2xl">
           <h2 className="text-xl font-bold text-white mb-6">Connexion Entreprise</h2>
@@ -134,7 +127,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-bold py-3.5 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-semibold py-3 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? "..." : "Se connecter"}
             </button>

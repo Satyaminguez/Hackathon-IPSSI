@@ -9,9 +9,11 @@ const PrivateRoute = ({ children }) => {
     return <div>Chargement...</div>;
   }
 
+  /* 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
+  */
 
   return children || <Outlet />;
 };

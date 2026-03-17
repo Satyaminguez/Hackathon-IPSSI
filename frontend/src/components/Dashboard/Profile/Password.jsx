@@ -197,7 +197,7 @@ export default function Password() {
 
         <button
           type="submit"
-          className="bg-orange-700 text-white py-2 px-8 rounded mt-4 hover:bg-orange-800 hove"
+          className="bg-teal-700 text-white py-2 px-8 rounded mt-4 hover:bg-teal-800 hove"
         >
           Enregistrer
         </button>

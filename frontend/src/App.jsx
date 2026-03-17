@@ -14,6 +14,10 @@ import PrivateRoute from "./components/auth/PrivateRoot";
 
 import DashboardLayout from "./layouts/DashboardLayout";
 import Dashboard from "./components/Dashboard/Dashboard";
+import Files from "./components/Dashboard/Files";
+import OCRValidation from "./components/Dashboard/OCRValidation";
+import DataLake from "./components/Dashboard/DataLake";
+import Clients from "./components/Dashboard/Clients";
 import NotFound from "./components/NotFound";
 import Pricing from "./components/payments/Pricing";
 import Payment from "./components/payments/Payment";
@@ -23,12 +27,10 @@ function App() {
 
   return (
     <BrowserRouter>
-      {!isAuthenticated && <NavAuth />}
-
       <Routes>
         <Route
           path="/"
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />}
+          element={<Navigate to="/dashboard" />}
         />
 
         <Route path="/login" element={<Login />} />
@@ -44,7 +46,14 @@ function App() {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="setting" element={<div>Mes paramètres</div>} />
+            
+            {/* Espace Client */}
+            <Route path="files" element={<Files />} />
+            
+            {/* Espace Admin (Supervision OCR & Data Lake) */}
+            <Route path="admin/ocr" element={<OCRValidation />} />
+            <Route path="admin/data-lake" element={<DataLake />} />
+            <Route path="admin/clients" element={<Clients />} />
           </Route>
         </Route>
 

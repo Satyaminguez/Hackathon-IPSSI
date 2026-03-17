@@ -89,7 +89,7 @@ export default function Invoices() {
                 <a
                   href={invoice.invoiceLink}
                   download
-                  className="bg-orange-600 text-white py-1 px-3 rounded hover:bg-orange-700"
+                  className="bg-teal-600 text-white py-1 px-3 rounded hover:bg-teal-700"
                 >
                   Télécharger
                 </a>

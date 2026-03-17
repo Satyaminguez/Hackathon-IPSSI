@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { CheckCircle2, ArrowLeft } from "lucide-react";
 
 export default function Confirmation() {
   const location = useLocation();
@@ -11,32 +12,31 @@ export default function Confirmation() {
   };
 
   return (
-    <div className="flex items-center justify-center mt-12 bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md text-center">
-        <div className="flex items-center mx-auto justify-center mb-4 w-min border border-slate-300">
-          <svg
-            className="w-16 h-16 text-green-500"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-6 relative overflow-hidden text-slate-300">
+      {/* Background Decor */}
+      <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+
+      <div className="w-full max-w-md relative z-10 transition-all duration-500 animate-in fade-in slide-in-from-bottom-8">
+        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-lg p-10 shadow-2xl text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-500/10 rounded-full mb-6 border border-emerald-500/20">
+            <CheckCircle2 className="text-emerald-500" size={40} />
+          </div>
+          
+          <h1 className="text-2xl font-bold text-white mb-4">{title}</h1>
+          <p className="text-slate-400 mb-8 leading-relaxed">{message}</p>
+          
+          <button
+            onClick={() => navigate(redirectPath)}
+            className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3.5 rounded-md transition-all flex items-center justify-center gap-2 group"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
+            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+            Retour à l'accueil
+          </button>
         </div>
-        <h1 className="text-3xl font-bold text-slate-800 mb-4">{title}</h1>
-        <p className="text-gray-700 mb-6">{message}</p>
-        <button
-          onClick={() => navigate(redirectPath)}
-          className="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded"
-        >
-          Retour à la page d'accueil
-        </button>
+
+        <p className="mt-8 text-center text-slate-600 text-xs text-balance">
+          &copy; 2024 DocSafe AI. Traitement de données confidentielles géré par pipeline automatisé.
+        </p>
       </div>
     </div>
   );
