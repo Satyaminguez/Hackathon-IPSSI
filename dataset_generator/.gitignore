@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.pyc
+data/raw/documents/**/*.pdf
+data/raw/documents/**/*.jpg
+data/raw/documents/**/*.png
