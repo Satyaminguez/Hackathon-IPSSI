@@ -127,7 +127,7 @@ const Dashboard = () => {
                   <DocStatusRow role={userRole} client="ACME Corp" name="Facture_Q1_signed.pdf" type="Contrat" status="Terminé" time="2m ago" />
                   <DocStatusRow role={userRole} client="Global Tech" name="RIB_Verification.jpg" type="RIB" status="Traitement" time="En cours" />
                   <DocStatusRow role={userRole} client="Startup SARL" name="ID_Card_Kazad.png" type="Identité" status="Attente" time="Dans la file" />
-                  <DocStatusRow role={userRole} client="Documind SA" name="KBIS_Extract_2024.pdf" type="KBIS" status="Terminé" time="14m ago" />
+                  <DocStatusRow role={userRole} client="Documind SA" name="KBIS_Extract_2026.pdf" type="KBIS" status="Terminé" time="14m ago" />
                   <DocStatusRow role={userRole} client="Financio" name="Tax_Form_AD_01.pdf" type="Administratif" status="Terminé" time="45m ago" />
                 </tbody>
               </table>

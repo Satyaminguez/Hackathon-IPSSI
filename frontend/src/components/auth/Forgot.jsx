@@ -113,7 +113,7 @@ export default function Forgot() {
         </div>
 
         <p className="mt-8 text-center text-slate-600 text-xs text-balance">
-          &copy; 2024 DocSafe AI. Protection des données par chiffrement AES-256.
+          &copy; 2026 DocSafe AI. Protection des données par chiffrement AES-256.
         </p>
       </div>
     </div>

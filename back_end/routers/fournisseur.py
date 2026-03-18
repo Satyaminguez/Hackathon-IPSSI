@@ -4,6 +4,7 @@ from models import ExtractedData, ValidationResult
 from services.validation_ia import validate_business_rules, check_cross_document_coherence
 from services.datalake import save_to_datalake
 from database import documents_collection 
+
 router = APIRouter(prefix="/fournisseur", tags=["Espace Fournisseur"])
 
 @router.post("/upload")
@@ -84,4 +85,44 @@ async def upload_document(file: UploadFile = File(...), current_user: dict = Dep
             "fournisseur": mock_extraction.fournisseur_nom,
             "total_ttc": getattr(mock_extraction, 'total_ttc', 0)
         }
+    }
+
+@router.get("/dashboard")
+async def get_fournisseur_dashboard(current_user: dict = Depends(get_current_user)):
+    """
+    API Dashboard Fournisseur : Statistiques personnelles de l'utilisateur connecté
+    """
+    user_email = current_user["email"]
+    
+    total_docs = await documents_collection.count_documents({"uploaded_by": user_email})
+    docs_valides = await documents_collection.count_documents({
+        "uploaded_by": user_email, 
+        "curated_zone.status_final": "VALIDE"
+    })
+    docs_anomalies = await documents_collection.count_documents({
+        "uploaded_by": user_email, 
+        "curated_zone.status_final": "A_VERIFIER"
+    })
+    
+
+    cursor = documents_collection.find({"uploaded_by": user_email}).sort("upload_date", -1).limit(5)
+    derniers_docs = await cursor.to_list(length=5)
+    
+
+    recent_docs_list = []
+    for doc in derniers_docs:
+        recent_docs_list.append({
+            "id": doc.get("document_id", str(doc["_id"])),
+            "nom_fichier": doc["raw_zone"]["filename"],
+            "date": doc["upload_date"],
+            "statut": doc["curated_zone"]["status_final"]
+        })
+    
+    return {
+        "statistiques": {
+            "total_envoyes": total_docs,
+            "valides": docs_valides,
+            "en_attente_ou_anomalie": docs_anomalies
+        },
+        "derniers_documents": recent_docs_list
     }

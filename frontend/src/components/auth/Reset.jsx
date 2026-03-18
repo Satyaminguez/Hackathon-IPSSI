@@ -161,7 +161,7 @@ export default function Reset() {
         </div>
 
         <p className="mt-8 text-center text-slate-600 text-xs text-balance">
-          &copy; 2024 DocSafe AI. Sécurité de niveau entreprise. ISO 27001 compliant.
+          &copy; 2026 DocSafe AI. Sécurité de niveau entreprise. ISO 27001 compliant.
         </p>
       </div>
     </div>
