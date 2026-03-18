@@ -6,15 +6,12 @@ from models import UserCreate
 
 router = APIRouter(prefix="/admin", tags=["Espace Administrateur"])
 
-# --- FONCTION SIMULATION EMAIL ---
 def send_welcome_email(email: str, password: str, role: str):
     """
     Simule l'envoi d'un e-mail. À remplacer plus tard par un vrai service SMTP si besoin.
     """
     print(f"\n✉️ [EMAIL ENVOYÉ] À: {email} | Rôle: {role} | MDP provisoire: {password}\n")
 
-
-# --- ROUTES EXISTANTES ---
 
 @router.get("/documents")
 async def get_all_documents(admin_user: dict = Depends(get_current_admin)):
@@ -41,8 +38,6 @@ async def get_all_users(admin_user: dict = Depends(get_current_admin)):
     return users
 
 
-# --- NOUVELLES ROUTES (Ajout, Suppression, Dashboard) ---
-
 @router.post("/users", status_code=status.HTTP_201_CREATED)
 async def create_user(
     user: UserCreate, 
@@ -55,12 +50,11 @@ async def create_user(
         raise HTTPException(status_code=400, detail="Cet email est déjà utilisé")
     
     user_dict = user.dict()
-    plain_password = user_dict.pop("password") # On extrait le mdp en clair pour le mail
+    plain_password = user_dict.pop("password") 
     user_dict["hashed_password"] = get_password_hash(plain_password)
     
     await users_collection.insert_one(user_dict)
-    
-    # Envoi de l'email en tâche de fond pour ne pas ralentir la réponse de l'API
+
     background_tasks.add_task(send_welcome_email, user.email, plain_password, user.role)
     
     return {"message": f"Utilisateur {user.email} créé avec succès. Un email lui a été envoyé."}
