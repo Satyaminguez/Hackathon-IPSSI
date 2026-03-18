@@ -144,7 +144,7 @@ export default function Login() {
         </div>
 
         <p className="mt-8 text-center text-slate-600 text-xs">
-          &copy; 2024 DocSafe AI. Sécurité de grade militaire. Certifié ISO 27001.
+          &copy; 2026 DocSafe AI. Sécurité de grade militaire. Certifié ISO 27001.
         </p>
       </div>
     </div>

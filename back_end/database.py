@@ -7,16 +7,13 @@ load_dotenv()
 
 uri = os.getenv("MONGO_URI")
 
-# Client async (compatible FastAPI)
 client = motor.motor_asyncio.AsyncIOMotorClient(uri, server_api=ServerApi('1'))
 
-db = client["filemina"]  # remplace "local" par le vrai nom de ta DB
+db = client["filemina"]  
 
-# Collections
 users_collection = db["users"]
 documents_collection = db["documents"]
 
-# Test de connexion
 async def ping():
     try:
         await client.admin.command('ping')

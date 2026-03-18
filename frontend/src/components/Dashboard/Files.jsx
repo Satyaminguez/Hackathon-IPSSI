@@ -55,7 +55,7 @@ export default function Files() {
   const categories = ["Contrats", "Factures", "Identités", "Rapports", "Autres"];
   
   const files = [
-    { name: "Contract_Q1_2024.pdf", type: "Contrat Client", size: "1.2 MB", date: "Il y a 2m" },
+    { name: "Contract_Q1_2026.pdf", type: "Contrat Client", size: "1.2 MB", date: "Il y a 2m" },
     { name: "Invoice_IPSSI_78.jpg", type: "Facture", size: "450 KB", date: "Il y a 1h" },
     { name: "ID_Card_Kazad.png", type: "Identité", size: "890 KB", date: "Hier" },
     { name: "Report_March.pdf", type: "Rapport", size: "4.5 MB", date: "15 Mars" },
