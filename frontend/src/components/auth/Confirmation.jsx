@@ -35,7 +35,7 @@ export default function Confirmation() {
         </div>
 
         <p className="mt-8 text-center text-slate-600 text-xs text-balance">
-          &copy; 2024 DocSafe AI. Traitement de données confidentielles géré par pipeline automatisé.
+          &copy; 2026 DocSafe AI. Traitement de données confidentielles géré par pipeline automatisé.
         </p>
       </div>
     </div>

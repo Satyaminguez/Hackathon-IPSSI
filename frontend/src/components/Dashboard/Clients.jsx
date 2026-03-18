@@ -3,10 +3,10 @@ import { Users, MoreVertical, Shield, Mail, Calendar, Activity } from "lucide-re
 
 const ClientsList = () => {
   const clients = [
-    { id: 1, name: "ACME Corp", email: "contact@acme.com", joined: "Jan 2024", docs: 1245, status: "Actif" },
-    { id: 2, name: "Global Tech", email: "finance@globaltech.fr", joined: "Fév 2024", docs: 890, status: "Actif" },
-    { id: 3, name: "Startup SARL", email: "admin@startup.io", joined: "Mars 2024", docs: 320, status: "En attente" },
-    { id: 4, name: "Documind SA", email: "info@documind.com", joined: "Mars 2024", docs: 12, status: "Actif" },
+    { id: 1, name: "ACME Corp", email: "contact@acme.com", joined: "Jan 2026", docs: 1245, status: "Actif" },
+    { id: 2, name: "Global Tech", email: "finance@globaltech.fr", joined: "Fév 2026", docs: 890, status: "Actif" },
+    { id: 3, name: "Startup SARL", email: "admin@startup.io", joined: "Mars 2026", docs: 320, status: "En attente" },
+    { id: 4, name: "Documind SA", email: "info@documind.com", joined: "Mars 2026", docs: 12, status: "Actif" },
   ];
 
   return (

@@ -28,7 +28,7 @@ const OCRValidation = () => {
     { 
       id: 3, 
       client: "Startup SARL", 
-      file: "kbis_2024.pdf", 
+      file: "kbis_2026.pdf", 
       confidence: 76, 
       incoherence: "Date d'expiration dépassée",
       status: "Bloqué" 
