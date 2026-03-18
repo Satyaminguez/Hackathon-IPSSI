@@ -9,3 +9,5 @@ motor
 email-validator
 python-multipart
 bcrypt
+pymongo
+dotenv
