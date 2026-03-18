@@ -1,20 +1,25 @@
 import os
-from pymongo.mongo_client import MongoClient
+import motor.motor_asyncio
 from pymongo.server_api import ServerApi
 from dotenv import load_dotenv
 
-# Charge les variables d'environnement depuis le fichier .env
 load_dotenv()
 
-# Récupère la variable directement depuis l'environnement
 uri = os.getenv("MONGO_URI")
 
-# Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
+# Client async (compatible FastAPI)
+client = motor.motor_asyncio.AsyncIOMotorClient(uri, server_api=ServerApi('1'))
 
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
+db = client["filemina"]  # remplace "local" par le vrai nom de ta DB
+
+# Collections
+users_collection = db["users"]
+documents_collection = db["documents"]
+
+# Test de connexion
+async def ping():
+    try:
+        await client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
+    except Exception as e:
+        print(e)
