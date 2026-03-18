@@ -156,25 +156,25 @@ services:
   # Accès : http://localhost:8001
   # Admin Django : http://localhost:8001/admin
   # ─────────────────────────────────────────────────────────────────────────
-  django:
-    build:
-      context: ./django             # Dossier contenant ton Dockerfile Django
-      dockerfile: Dockerfile
-    container_name: hkt-django
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    environment:
-      MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
-      DJANGO_SECRET_KEY: "django_secret_key_hkt_2026"
-      DEBUG: "true"
-    volumes:
-      - ./django:/app
-    ports:
-      - "8001:8001"
-    restart: unless-stopped
-    networks:
-      - hkt-network
+  # django:
+  #   build:
+  #     context: ./django             # Dossier contenant ton Dockerfile Django
+  #     dockerfile: Dockerfile
+  #   container_name: hkt-django
+  #   depends_on:
+  #     mongodb:
+  #       condition: service_healthy
+  #   environment:
+  #     MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
+  #     DJANGO_SECRET_KEY: "django_secret_key_hkt_2026"
+  #     DEBUG: "true"
+  #   volumes:
+  #     - ./django:/app
+  #   ports:
+  #     - "8001:8001"
+  #   restart: unless-stopped
+  #   networks:
+  #     - hkt-network
 
   # ─────────────────────────────────────────────────────────────────────────
   # React — Front-end
