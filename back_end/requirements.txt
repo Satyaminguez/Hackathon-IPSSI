@@ -9,5 +9,5 @@ motor
 email-validator
 python-multipart
 bcrypt
-pymongo
+pymongo==4.6.3
 dotenv
