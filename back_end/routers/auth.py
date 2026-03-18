@@ -38,6 +38,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_info(current_user: dict = Depends(get_current_user)):
     """Permet au Frontend de récupérer le profil complet de l'utilisateur connecté"""
-    # MongoDB retourne un _id de type ObjectId, il faut le convertir en string
+   
     current_user["_id"] = str(current_user["_id"])
     return current_user
