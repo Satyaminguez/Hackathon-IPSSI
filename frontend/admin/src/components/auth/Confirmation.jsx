@@ -27,7 +27,7 @@ export default function Confirmation() {
           
           <button
             onClick={() => navigate(redirectPath)}
-            className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3.5 rounded-md transition-all flex items-center justify-center gap-2 group"
+            className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3.5 rounded-md transition-all flex items-center justify-center gap-2 group"
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
             Retour à l'accueil

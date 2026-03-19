@@ -42,11 +42,11 @@ export default function Sidebar() {
     <aside className="fixed top-0 left-0 h-screen w-64 bg-[#0B1120] border-r border-white/5 p-6 flex flex-col justify-between z-50">
       <div>
         <Link to="/dashboard" className="flex items-center gap-3 mb-10 px-2 transition-transform hover:scale-105">
-          <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-teal-500/20">
+          <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center shadow-lg shadow-orange-500/20">
             <ShieldCheck className="text-white" size={24} />
           </div>
           <span className="text-xl font-bold text-white tracking-tight">
-            DocSafe <span className="text-teal-500">Admin</span>
+            DocSafe <span className="text-orange-500">Admin</span>
           </span>
         </Link>
 
@@ -60,11 +60,11 @@ export default function Sidebar() {
                     to={item.path}
                     className={`flex items-center space-x-3 cursor-pointer py-3 px-4 rounded-lg transition-all duration-300 group ${
                       isActive
-                        ? "bg-teal-500/10 text-teal-400 border border-teal-500/10 shadow-sm shadow-teal-500/5"
+                        ? "bg-orange-500/10 text-orange-400 border border-orange-500/10 shadow-sm shadow-orange-500/5"
                         : "text-slate-400 hover:bg-white/5 hover:text-white"
                     }`}
                   >
-                    <span className={`transition-all duration-300 ${isActive ? "text-teal-400 scale-110" : "text-slate-500 group-hover:text-slate-300"}`}>
+                    <span className={`transition-all duration-300 ${isActive ? "text-orange-400 scale-110" : "text-slate-500 group-hover:text-slate-300"}`}>
                       {item.icon}
                     </span>
                     <span className="font-semibold text-sm tracking-tight">{item.name}</span>

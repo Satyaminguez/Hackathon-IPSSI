@@ -42,7 +42,7 @@ export default function Folder() {
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("files", file);
 
     try {
       const uploadedFile = await fileService.upload(formData);
