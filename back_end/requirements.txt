@@ -11,5 +11,8 @@ python-dotenv
 resend
 jinja2
 dnspython
+resend
+pdf2image
+PyMuPDF
 pymongo==4.6.3
 dotenv
