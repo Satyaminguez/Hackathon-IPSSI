@@ -107,12 +107,12 @@ export default function Reset() {
                 Nouveau mot de passe
               </label>
               <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-orange-400 transition-colors" size={18} />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full bg-slate-950 border ${errors.password ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                  className={`w-full bg-slate-950 border ${errors.password ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none`}
                   placeholder="••••••••"
                 />
                 <button
@@ -131,12 +131,12 @@ export default function Reset() {
                 Confirmer le mot de passe
               </label>
               <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-orange-400 transition-colors" size={18} />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full bg-slate-950 border ${errors.confirmPassword ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                  className={`w-full bg-slate-950 border ${errors.confirmPassword ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none`}
                   placeholder="••••••••"
                 />
                 <button
@@ -153,7 +153,7 @@ export default function Reset() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-bold py-3.5 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full bg-orange-600 hover:bg-orange-500 disabled:bg-orange-800 text-white font-bold py-3.5 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
             >
               {loading ? "..." : "Réinitialiser"}
             </button>

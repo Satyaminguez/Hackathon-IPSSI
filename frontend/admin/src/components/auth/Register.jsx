@@ -114,12 +114,12 @@ export default function Register() {
                   Nom
                 </label>
                 <div className="relative group">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-orange-400 transition-colors" size={18} />
                   <input
                     type="text"
                     value={lastname}
                     onChange={(e) => setLastname(e.target.value)}
-                    className={`w-full bg-slate-950 border ${errors.lastname ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                    className={`w-full bg-slate-950 border ${errors.lastname ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none`}
                     placeholder="Doe"
                   />
                 </div>
@@ -130,12 +130,12 @@ export default function Register() {
                   Prénom
                 </label>
                 <div className="relative group">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-orange-400 transition-colors" size={18} />
                   <input
                     type="text"
                     value={firstname}
                     onChange={(e) => setFirstname(e.target.value)}
-                    className={`w-full bg-slate-950 border ${errors.firstname ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                    className={`w-full bg-slate-950 border ${errors.firstname ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none`}
                     placeholder="John"
                   />
                 </div>
@@ -148,12 +148,12 @@ export default function Register() {
                 Email
               </label>
               <div className="relative group">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-orange-400 transition-colors" size={18} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full bg-slate-950 border ${errors.email ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                  className={`w-full bg-slate-950 border ${errors.email ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none`}
                   placeholder="contact@agence-digitale.fr"
                 />
               </div>
@@ -165,12 +165,12 @@ export default function Register() {
                 Mot de passe
               </label>
               <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-orange-400 transition-colors" size={18} />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full bg-slate-950 border ${errors.password ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                  className={`w-full bg-slate-950 border ${errors.password ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none`}
                   placeholder="Minimum 8 caractères"
                 />
                 <button
@@ -187,7 +187,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-semibold py-3 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full bg-orange-600 hover:bg-orange-500 disabled:bg-orange-800 text-white font-semibold py-3 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? "..." : "S'inscrire"}
             </button>
@@ -196,7 +196,7 @@ export default function Register() {
           <div className="mt-8 pt-6 border-t border-slate-800 text-center">
             <p className="text-slate-500 text-sm">
               Déjà membre ?{" "}
-              <Link to="/login" className="text-teal-400 font-bold hover:text-teal-300 transition-colors">
+              <Link to="/login" className="text-orange-400 font-bold hover:text-orange-300 transition-colors">
                 Se connecter
               </Link>
             </p>

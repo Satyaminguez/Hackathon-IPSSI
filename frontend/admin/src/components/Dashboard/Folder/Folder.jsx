@@ -43,7 +43,7 @@ export default function Folder() {
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("files", file);
 
     try {
       await fileService.upload(formData);
@@ -127,7 +127,7 @@ export default function Folder() {
               <option value="asc">Ascendant</option>
               <option value="desc">Descendant</option>
             </select>
-            <label className="cursor-pointer bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded">
+            <label className="cursor-pointer bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded">
               <input
                 type="file"
                 name="file"

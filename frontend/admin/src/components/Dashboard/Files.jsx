@@ -25,7 +25,7 @@ const Drawer = ({ isOpen, onClose, children }) => (
 const FileItem = ({ name, type, size, date }) => (
   <div className="flex items-center justify-between p-4 bg-slate-900/30 border border-slate-800 rounded-lg hover:bg-slate-900/50 transition-all group">
     <div className="flex items-center gap-4">
-      <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center text-teal-400 group-hover:scale-110 transition-transform">
+      <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
         <FileText size={24} />
       </div>
       <div>
@@ -36,10 +36,10 @@ const FileItem = ({ name, type, size, date }) => (
     <div className="flex items-center gap-6">
       <span className="text-xs text-slate-500 font-medium">{date}</span>
       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button className="p-2 text-slate-400 hover:text-teal-400 transition-colors">
+        <button className="p-2 text-slate-400 hover:text-orange-400 transition-colors">
           <Eye size={16} />
         </button>
-        <button className="p-2 text-slate-400 hover:text-teal-400 transition-colors">
+        <button className="p-2 text-slate-400 hover:text-orange-400 transition-colors">
           <Download size={16} />
         </button>
         <button className="p-2 text-slate-400 hover:text-red-400 transition-colors">
@@ -71,7 +71,7 @@ export default function Files() {
         </div>
         <button 
           onClick={() => setIsDrawerOpen(true)}
-          className="bg-teal-600 hover:bg-teal-500 text-white px-6 py-3 rounded-lg text-sm font-bold flex items-center gap-2 transition-all active:scale-95"
+          className="bg-orange-600 hover:bg-orange-500 text-white px-6 py-3 rounded-lg text-sm font-bold flex items-center gap-2 transition-all active:scale-95"
         >
           <Upload size={18} />
           Uploader un document
@@ -88,7 +88,7 @@ export default function Files() {
         <form className="space-y-8">
           <div>
             <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Catégorie du document</label>
-            <select className="w-full bg-slate-950 border border-slate-800 rounded-lg py-3.5 px-4 text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all">
+            <select className="w-full bg-slate-950 border border-slate-800 rounded-lg py-3.5 px-4 text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all">
               <option value="">-- Choisir une catégorie --</option>
               {categories.map((cat, i) => (
                 <option key={i} value={cat}>{cat}</option>
@@ -98,16 +98,16 @@ export default function Files() {
 
           <div>
             <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Fichiers à uploader</label>
-            <div className="border-2 border-dashed border-slate-800 rounded-lg p-10 text-center hover:border-teal-500 hover:bg-teal-500/5 transition-all group cursor-pointer">
-              <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center mx-auto mb-4 border border-slate-700 group-hover:border-teal-500/30 transition-all">
-                <Upload className="text-slate-500 group-hover:text-teal-400 transition-colors" size={32} />
+            <div className="border-2 border-dashed border-slate-800 rounded-lg p-10 text-center hover:border-orange-500 hover:bg-orange-500/5 transition-all group cursor-pointer">
+              <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center mx-auto mb-4 border border-slate-700 group-hover:border-orange-500/30 transition-all">
+                <Upload className="text-slate-500 group-hover:text-orange-400 transition-colors" size={32} />
               </div>
               <p className="text-sm font-bold text-white mb-1">Cliquez pour télécharger</p>
               <p className="text-xs text-slate-500">ou glissez un fichier ici</p>
             </div>
           </div>
 
-          <button className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-4 rounded-lg transition-all active:scale-[0.98] mt-10">
+          <button className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 rounded-lg transition-all active:scale-[0.98] mt-10">
             Envoyer le document
           </button>
         </form>
