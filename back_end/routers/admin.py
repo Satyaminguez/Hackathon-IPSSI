@@ -7,11 +7,9 @@ from typing import List
 
 router = APIRouter(prefix="/admin", tags=["Espace Administrateur"])
 
-# --- FONCTION SIMULATION EMAIL ---
 def send_welcome_email(email: str, password: str, role: str):
     print(f"\n✉️ [EMAIL ENVOYÉ] À: {email} | Rôle: {role} | MDP provisoire: {password}\n")
 
-# --- ROUTES ADMINISTRATION ---
 
 @router.get("/documents")
 async def get_all_documents(admin_user: dict = Depends(get_current_admin)):
@@ -35,11 +33,38 @@ async def get_all_users(admin_user: dict = Depends(get_current_admin)):
         user["document_count"] = doc_count
     return users
 
-@router.get("/users/{email}/details")
-async def get_user_details(email: str, admin_user: dict = Depends(get_current_admin)):
-    """Voir le détail d'un client (infos + ses documents)"""
-    user = await users_collection.find_one({"email": email}, {"hashed_password": 0})
-    if not user:
+
+@router.post("/users", status_code=status.HTTP_201_CREATED)
+async def create_user(
+    user: UserCreate, 
+    background_tasks: BackgroundTasks, 
+    admin_user: dict = Depends(get_current_admin)
+):
+    """API pour ajouter un utilisateur (fournisseur ou admin) depuis le panel admin"""
+    existing_user = await users_collection.find_one({"email": user.email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Cet email est déjà utilisé")
+    
+    user_dict = user.dict()
+    plain_password = user_dict.pop("password") 
+    user_dict["hashed_password"] = get_password_hash(plain_password)
+    
+    await users_collection.insert_one(user_dict)
+
+    background_tasks.add_task(send_welcome_email, user.email, plain_password, user.role)
+    
+    return {"message": f"Utilisateur {user.email} créé avec succès. Un email lui a été envoyé."}
+
+
+@router.delete("/users/{user_id}")
+async def delete_user(user_id: str, admin_user: dict = Depends(get_current_admin)):
+    """API pour supprimer un utilisateur via son ID MongoDB"""
+    if not ObjectId.is_valid(user_id):
+        raise HTTPException(status_code=400, detail="Format d'ID invalide")
+        
+    result = await users_collection.delete_one({"_id": ObjectId(user_id)})
+    
+    if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
     
     user["_id"] = str(user["_id"])
