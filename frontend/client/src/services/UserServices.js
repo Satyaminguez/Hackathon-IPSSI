@@ -107,7 +107,7 @@ export default class UserServices {
   async uploadDocument(file, category) {
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("files", file);
       formData.append("category", category);
 
       const response = await fetch(`${API_URL}/fournisseur/upload`, {
@@ -137,7 +137,8 @@ export default class UserServices {
         },
       });
 
-      if (!response.ok) throw new Error("Impossible de récupérer les documents");
+      if (!response.ok)
+        throw new Error("Impossible de récupérer les documents");
       return await response.json();
     } catch (error) {
       throw error;
@@ -146,12 +147,15 @@ export default class UserServices {
 
   async deleteDocument(docId) {
     try {
-      const response = await fetch(`${API_URL}/fournisseur/documents/${docId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const response = await fetch(
+        `${API_URL}/fournisseur/documents/${docId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) throw new Error("Échec de la suppression");
       return await response.json();
@@ -162,12 +166,15 @@ export default class UserServices {
 
   async viewDocument(docId) {
     try {
-      const response = await fetch(`${API_URL}/fournisseur/documents/${docId}/view`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const response = await fetch(
+        `${API_URL}/fournisseur/documents/${docId}/view`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) throw new Error("Impossible de charger le document");
 
@@ -231,7 +238,8 @@ export default class UserServices {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
+      if (!response.ok)
+        throw new Error("Erreur lors de la récupération des utilisateurs");
       return await response.json();
     } catch (error) {
       throw error;
@@ -255,14 +263,17 @@ export default class UserServices {
 
   async adminUpdateDocStatus(docId, status) {
     try {
-      const response = await fetch(`${API_URL}/admin/documents/${docId}/status`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${API_URL}/admin/documents/${docId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status }),
         },
-        body: JSON.stringify({ status }),
-      });
+      );
       if (!response.ok) throw new Error("Échec de la validation");
       return await response.json();
     } catch (error) {

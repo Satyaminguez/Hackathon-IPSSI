@@ -68,3 +68,4 @@ class ResetPasswordRequest(BaseModel):
 
 class StatusUpdate(BaseModel):
     status: str
+    reason: Optional[str] = None

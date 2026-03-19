@@ -42,7 +42,7 @@ const DocStatusRow = ({ doc }) => {
     <tr className="border-b border-white/5 group hover:bg-white/5 transition-colors">
       <td className="py-5 pl-8">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-[#0B1120] border border-white/5 flex items-center justify-center text-slate-500 group-hover:text-teal-400 transition-all shadow-inner">
+          <div className="w-12 h-12 rounded-lg bg-[#0B1120] border border-white/5 flex items-center justify-center text-slate-500 group-hover:text-orange-400 transition-all shadow-inner">
             <FileText size={20} />
           </div>
           <div>
@@ -66,7 +66,7 @@ const DocStatusRow = ({ doc }) => {
          </div>
       </td>
       <td className="py-5 text-right pr-8">
-        <button className="h-10 w-10 rounded-full border border-white/10 flex items-center justify-center text-slate-600 hover:text-teal-400 hover:border-teal-500/50 transition-all bg-white/5">
+        <button className="h-10 w-10 rounded-full border border-white/10 flex items-center justify-center text-slate-600 hover:text-orange-400 hover:border-orange-500/50 transition-all bg-white/5">
           <ChevronRight size={20} />
         </button>
       </td>
@@ -103,7 +103,7 @@ const Dashboard = () => {
 
   const displayStats = [
     { label: "Clients Actifs", value: stats?.utilisateurs?.total || 0, icon: Users, color: "text-indigo-400", bg: "bg-indigo-500/5" },
-    { label: "Volume Global", value: stats?.documents?.total || 0, icon: Layers, color: "text-teal-400", bg: "bg-teal-500/5" },
+    { label: "Volume Global", value: stats?.documents?.total || 0, icon: Layers, color: "text-orange-400", bg: "bg-orange-500/5" },
     { label: "Documents Validés", value: stats?.documents?.verifies || 0, icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-500/5" },
     { label: "En Attente OCR", value: stats?.documents?.en_attente || 0, icon: Activity, color: "text-amber-400", bg: "bg-amber-500/5" },
   ];
@@ -114,7 +114,7 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 bg-[#0D1425]/40 p-8 rounded-lg border border-white/5 backdrop-blur-md">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-             <div className="w-2.5 h-2.5 rounded-full bg-teal-500 shadow-[0_0_15px_#14b8a6] animate-pulse" />
+             <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-[0_0_15px_#14b8a6] animate-pulse" />
              <h1 className="text-4xl font-black text-white tracking-tighter">Console Analytics</h1>
           </div>
           <p className="text-slate-500 text-sm font-bold uppercase tracking-[0.3em] flex items-center gap-2">
@@ -127,7 +127,7 @@ const Dashboard = () => {
               <Search size={18} className="text-slate-400" />
               <span className="text-xs font-black text-white uppercase tracking-widest">Recherche Flash</span>
            </button>
-           <button className="px-6 py-3 bg-teal-500 text-black font-black rounded-lg flex items-center gap-3 hover:bg-teal-400 transition-all shadow-[0_10px_30px_rgba(20,184,166,0.3)]">
+           <button className="px-6 py-3 bg-orange-500 text-black font-black rounded-lg flex items-center gap-3 hover:bg-orange-400 transition-all shadow-[0_10px_30px_rgba(20,184,166,0.3)]">
               <Filter size={18} />
               <span className="text-xs uppercase tracking-widest">Filtres Système</span>
            </button>
@@ -195,14 +195,14 @@ const Dashboard = () => {
 
       {/* Full Width Activity Feed */}
       <div className="w-full">
-        <div className="bg-[#0D1425]/60 rounded-[3.5rem] border border-white/10 overflow-hidden shadow-2xl backdrop-blur-3xl">
+        <div className="bg-[#0D1425]/60 rounded-lg border border-white/10 overflow-hidden shadow-2xl backdrop-blur-3xl">
           <div className="p-10 border-b border-white/5 flex justify-between items-center bg-white/5">
             <div className="flex items-center gap-5">
-               <div className="w-12 h-12 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400">
+               <div className="w-12 h-12 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400">
                   <Workflow size={24} />
                </div>
                <div>
-                  <h2 className="text-2xl font-black text-white tracking-tight">Flux Documents Entrants</h2>
+                  <h2 className="text-2xl font-semibold text-white tracking-tight">Flux Documents Entrants</h2>
                   <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest mt-1">Surveillance globale de l'extraction OCR</p>
                </div>
             </div>

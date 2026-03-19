@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, status
+from fastapi.responses import FileResponse
+import os
 from bson import ObjectId
 from security import get_current_admin, get_password_hash
 from database import documents_collection, users_collection
@@ -67,34 +69,89 @@ async def delete_user(user_id: str, admin_user: dict = Depends(get_current_admin
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
     
+    return {"message": "Utilisateur supprimé avec succès"}
+
+@router.get("/users/{email}/details")
+async def get_user_details(email: str, admin_user: dict = Depends(get_current_admin)):
+    """Récupère le profil détaillé d'un utilisateur et tous ses documents"""
+    user = await users_collection.find_one({"email": email}, {"hashed_password": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Client non trouvé")
+        
     user["_id"] = str(user["_id"])
     
-    # Documents de cet utilisateur
+    # Documents rattachés à cet email
     cursor = documents_collection.find({"uploaded_by": email}).sort("upload_date", -1)
-    docs = await cursor.to_list(length=100)
+    docs = await cursor.to_list(length=200)
+    
+    # Formatage ObjectId pour JSON
     for doc in docs:
         doc["_id"] = str(doc["_id"])
-    
+        
     return {
         "profile": user,
         "documents": docs
     }
 
+from services.email_service import send_document_validated_email, send_document_rejected_email
+
 @router.patch("/documents/{doc_id}/status")
-async def update_doc_status(doc_id: str, update: StatusUpdate, admin_user: dict = Depends(get_current_admin)):
-    """Changer le statut d'un document (Vérifié, En attente, Refusé)"""
+async def update_doc_status(
+    doc_id: str, 
+    update: StatusUpdate, 
+    background_tasks: BackgroundTasks,
+    admin_user: dict = Depends(get_current_admin)
+):
+    """Changer le statut d'un document (Vérifié, En attente, Refusé) et notifier le client"""
     if not ObjectId.is_valid(doc_id):
         raise HTTPException(status_code=400, detail="ID invalide")
     
+    # Récupérer le document avant mise à jour pour avoir l'email et le nom de fichier
+    doc = await documents_collection.find_one({"_id": ObjectId(doc_id)})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document non trouvé")
+
     result = await documents_collection.update_one(
         {"_id": ObjectId(doc_id)},
         {"$set": {"curated_zone.status_final": update.status}}
     )
     
-    if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Document non trouvé ou aucun changement")
+    # Envoi d'email 
+    if update.status == "VERIFIE":
+        background_tasks.add_task(send_document_validated_email, doc.get("uploaded_by"), doc.get("filename", "Document inconnu"))
+    elif update.status == "REFUSE":
+        reason = update.reason or "Votre document présente une non-conformité majeure après analyse manuelle."
+        background_tasks.add_task(send_document_rejected_email, doc.get("uploaded_by"), doc.get("filename", "Document inconnu"), reason)
         
     return {"message": f"Statut mis à jour : {update.status}"}
+
+@router.delete("/documents/{doc_id}")
+async def delete_document_admin(doc_id: str, admin_user: dict = Depends(get_current_admin)):
+    """API pour supprimer définitivement un document de la plateforme"""
+    if not ObjectId.is_valid(doc_id):
+        raise HTTPException(status_code=400, detail="ID invalide")
+    
+    result = await documents_collection.delete_one({"_id": ObjectId(doc_id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Document introuvable")
+        
+    return {"message": "Document supprimé avec succès"}
+
+@router.get("/documents/{doc_id}/view")
+async def view_document_admin(doc_id: str, admin_user: dict = Depends(get_current_admin)):
+    """Visualiser un document (Stream PDF/Image) côté admin"""
+    if not ObjectId.is_valid(doc_id):
+        raise HTTPException(status_code=400, detail="ID invalide")
+
+    doc = await documents_collection.find_one({"_id": ObjectId(doc_id)})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document non trouvé")
+    
+    file_path = doc.get("raw_zone", {}).get("physical_path")
+    if not file_path or not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Fichier introuvable sur le disque")
+    
+    return FileResponse(file_path)
 
 @router.get("/dashboard")
 async def get_dashboard_stats(admin_user: dict = Depends(get_current_admin)):
