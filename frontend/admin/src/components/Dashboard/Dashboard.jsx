@@ -143,7 +143,7 @@ const Dashboard = () => {
             </h3>
             <div className="h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
+                <AreaChart data={stats?.graphiques?.evolution || []}>
                   <defs>
                     <linearGradient id="colorDocs" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3}/>

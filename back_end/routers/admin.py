@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, status
 from fastapi.responses import FileResponse
 import os
+from datetime import datetime, timedelta
 from bson import ObjectId
 from security import get_current_admin, get_password_hash
 from database import documents_collection, users_collection
@@ -170,11 +171,29 @@ async def get_dashboard_stats(admin_user: dict = Depends(get_current_admin)):
     docs_verifies = await documents_collection.count_documents({"curated_zone.status_final": "VERIFIE"})
     docs_attente = await documents_collection.count_documents({"curated_zone.status_final": "EN_ATTENTE"})
     
+    # --- Generation des Graphiques ---
+    today = datetime.now()
+    evolution = []
+    days_fr = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+    
+    for i in range(6, -1, -1):
+        target_day = today - timedelta(days=i)
+        day_str = target_day.strftime("%Y-%m-%d")
+        name = days_fr[target_day.weekday()]
+        
+        count = await documents_collection.count_documents({
+            "upload_date": {"$regex": f"^{day_str}"}
+        })
+        evolution.append({"name": name, "docs": count})
+
     return {
         "utilisateurs": {"total": total_users},
         "documents": {
             "total": total_docs,
             "verifies": docs_verifies,
             "en_attente": docs_attente
+        },
+        "graphiques": {
+            "evolution": evolution
         }
     }
