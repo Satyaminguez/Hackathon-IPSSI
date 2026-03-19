@@ -1,12 +1,13 @@
+version: "3.8"
 
 # =============================================================================
 #  STACK COMPLÈTE - HKT IPSSI
-#  • PostgreSQL  → métadonnées internes d'Airflow (ne pas toucher)
-#  • MongoDB     → base de données de l'application (documents, OCR, etc.)
-#  • Airflow     → orchestration des pipelines (webserver + scheduler)
-#  • FastAPI     → API principale (traitement, OCR, validation)
-#  • Django      → back-office / outil conformité
-#  • React       → front-end
+#  • PostgreSQL   → métadonnées internes Airflow uniquement
+#  • MongoDB      → LOCAL (commenter si vous utilisez Atlas)
+#  • Airflow      → orchestration (webserver + scheduler)
+#  • back_end     → FastAPI (API principale)
+#  • react-admin  → Interface administrateur (http://localhost:3000)
+#  • react-client → Interface client (http://localhost:3001)
 # =============================================================================
 
 services:
@@ -14,9 +15,9 @@ services:
   # ─────────────────────────────────────────────────────────────────────────
   # PostgreSQL — RÉSERVÉ à Airflow, ne pas utiliser pour l'appli
   # ─────────────────────────────────────────────────────────────────────────
-  airflow-postgres:
+  postgres:
     image: postgres:16
-    container_name: airflow-postgres
+    container_name: hkt-postgres
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
@@ -31,11 +32,10 @@ services:
     restart: unless-stopped
     networks:
       - hkt-network
-    # Port non exposé volontairement (inutile d'y accéder depuis l'hôte)
 
   # ─────────────────────────────────────────────────────────────────────────
-  # MongoDB — Base de données de l'APPLICATION
-  # Accès : mongodb://admin:admin@localhost:27017
+  # MongoDB LOCAL — Commenter tout ce bloc si vous utilisez MongoDB Atlas
+  # Accès local : mongodb://admin:admin@localhost:27017
   # ─────────────────────────────────────────────────────────────────────────
   mongodb:
     image: mongo:7
@@ -43,9 +43,9 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
-      MONGO_INITDB_DATABASE: hkt_db       # BDD créée automatiquement au 1er démarrage
+      MONGO_INITDB_DATABASE: hkt_db
     ports:
-      - "27017:27017"                      # Accessible depuis l'hôte (ex: MongoDB Compass)
+      - "27017:27017"
     volumes:
       - mongo-db-volume:/data/db
     healthcheck:
@@ -58,26 +58,25 @@ services:
       - hkt-network
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Airflow — Webserver (Interface UI sur http://localhost:8080)
+  # Airflow — Webserver (UI sur http://localhost:8080)
   # Login : admin / admin
   # ─────────────────────────────────────────────────────────────────────────
   airflow-webserver:
     image: apache/airflow:2.9.3
     container_name: hkt-airflow-webserver
     depends_on:
-      airflow-postgres:
+      postgres:
         condition: service_healthy
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
       AIRFLOW__WEBSERVER__SECRET_KEY: "hkt_secret_key_2026"
       AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth
-      # Donne accès à MongoDB depuis les DAGs
       MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
     volumes:
-      - ./dags:/opt/airflow/dags       # Tes DAGs Python ici
+      - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
     ports:
       - "8080:8080"
@@ -98,16 +97,16 @@ services:
       - hkt-network
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Airflow — Scheduler (exécute les DAGs en arrière-plan)
+  # Airflow — Scheduler
   # ─────────────────────────────────────────────────────────────────────────
   airflow-scheduler:
     image: apache/airflow:2.9.3
     container_name: hkt-airflow-scheduler
     depends_on:
-      airflow-postgres:
+      postgres:
         condition: service_healthy
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
@@ -128,23 +127,26 @@ services:
   # ─────────────────────────────────────────────────────────────────────────
   # FastAPI — API principale
   # Accès : http://localhost:8000
-  # Docs Swagger : http://localhost:8000/docs
+  # Swagger : http://localhost:8000/docs
   # ─────────────────────────────────────────────────────────────────────────
   back_end:
     build:
-      context: ./back_end       # Dossier contenant ton Dockerfile FastAPI
+      context: ./back_end
       dockerfile: Dockerfile
-    container_name: hkt-fastapi
+    container_name: hkt-backend
     depends_on:
       mongodb:
         condition: service_healthy
     environment:
+      # ── Option 1 : MongoDB LOCAL ────────────────────────────────────────
       MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
+      # ── Option 2 : MongoDB Atlas (commenter Option 1, décommenter ici) ─
+      # MONGO_URI: mongodb+srv://<user>:<password>@<cluster>.mongodb.net/hkt_db
       AIRFLOW_URL: http://airflow-webserver:8080
       AIRFLOW_USER: admin
       AIRFLOW_PASSWORD: admin
     volumes:
-      - ./back_end:/app              # Hot-reload : tes modifs sont prises en compte à chaud
+      - ./back_end:/app
     ports:
       - "8000:8000"
     restart: unless-stopped
@@ -152,47 +154,43 @@ services:
       - hkt-network
 
   # ─────────────────────────────────────────────────────────────────────────
-  # Django — Back-office / Outil conformité
-  # Accès : http://localhost:8001
-  # Admin Django : http://localhost:8001/admin
-  # ─────────────────────────────────────────────────────────────────────────
-  # django:
-  #   build:
-  #     context: ./django             # Dossier contenant ton Dockerfile Django
-  #     dockerfile: Dockerfile
-  #   container_name: hkt-django
-  #   depends_on:
-  #     mongodb:
-  #       condition: service_healthy
-  #   environment:
-  #     MONGO_URI: mongodb://admin:admin@mongodb:27017/hkt_db?authSource=admin
-  #     DJANGO_SECRET_KEY: "django_secret_key_hkt_2026"
-  #     DEBUG: "true"
-  #   volumes:
-  #     - ./django:/app
-  #   ports:
-  #     - "8001:8001"
-  #   restart: unless-stopped
-  #   networks:
-  #     - hkt-network
-
-  # ─────────────────────────────────────────────────────────────────────────
-  # React — Front-end
+  # React Admin — Interface administrateur
   # Accès : http://localhost:3000
   # ─────────────────────────────────────────────────────────────────────────
-  react:
+  react-admin:
     image: node:20-alpine
-    container_name: hkt-react
+    container_name: hkt-react-admin
     working_dir: /app
     volumes:
-      - ./frontend:/app
-      - /app/node_modules 
+      - ./frontend/admin:/app
+      - /app/node_modules
     ports:
       - "3000:3000"
     environment:
-      VITE_API_URL: http://localhost:8000   # URL FastAPI appelée depuis le navigateur
+      VITE_API_URL: http://localhost:8000
       CHOKIDAR_USEPOLLING: "true"
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3000"
+    restart: unless-stopped
+    networks:
+      - hkt-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # React Client — Interface client
+  # Accès : http://localhost:3001
+  # ─────────────────────────────────────────────────────────────────────────
+  react-client:
+    image: node:20-alpine
+    container_name: hkt-react-client
+    working_dir: /app
+    volumes:
+      - ./frontend/client:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    environment:
+      VITE_API_URL: http://localhost:8000
+      CHOKIDAR_USEPOLLING: "true"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3001"
     restart: unless-stopped
     networks:
       - hkt-network
