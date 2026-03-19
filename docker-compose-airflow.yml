@@ -130,9 +130,9 @@ services:
   # Accès : http://localhost:8000
   # Docs Swagger : http://localhost:8000/docs
   # ─────────────────────────────────────────────────────────────────────────
-  fastapi:
+  back_end:
     build:
-      context: ./fastapi          # Dossier contenant ton Dockerfile FastAPI
+      context: ./back_end       # Dossier contenant ton Dockerfile FastAPI
       dockerfile: Dockerfile
     container_name: hkt-fastapi
     depends_on:
@@ -144,7 +144,7 @@ services:
       AIRFLOW_USER: admin
       AIRFLOW_PASSWORD: admin
     volumes:
-      - ./fastapi:/app              # Hot-reload : tes modifs sont prises en compte à chaud
+      - ./back_end:/app              # Hot-reload : tes modifs sont prises en compte à chaud
     ports:
       - "8000:8000"
     restart: unless-stopped
