@@ -39,31 +39,28 @@ export default function PersonalInfo() {
       {load && <Loader />}
       
       <div className="rounded-lg p-10 bg-white/5 border border-white/10 shadow-2xl backdrop-blur-xl">
-        <h3 className="text-[10px] font-extrabold text-teal-400 uppercase tracking-[0.2em] mb-10 border-b border-white/5 pb-4">Profil Administrateur Certifié</h3>
+        <h3 className="text-[10px] font-extrabold text-orange-400 uppercase tracking-[0.2em] mb-10 border-b border-white/5 pb-4">Profil Administrateur Certifié</h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-12">
           <div className="space-y-2">
             <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Prénom</label>
-            <p className="text-xl font-bold text-white tracking-tight border-l-2 border-teal-500 pl-4 py-1">
+            <p className="text-xl font-bold text-white tracking-tight border-l-2 border-orange-500 pl-4 py-1">
               {formData.prenom || "Chargement..."}
             </p>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Nom de famille</label>
-            <p className="text-xl font-bold text-white tracking-tight border-l-2 border-slate-500 pl-4 py-1">
+            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Nom</label>
+            <p className="text-xl font-bold text-white tracking-tight border-l-2 border-orange-500 pl-4 py-1">
               {formData.nom || "Chargement..."}
             </p>
           </div>
 
-          <div className="sm:col-span-2 space-y-2 bg-[#0B1120]/30 p-6 rounded-lg border border-white/5">
-            <label className="block text-[10px] font-bold text-teal-500/50 uppercase tracking-widest">Adresse de contact sécurisée</label>
-            <div className="flex items-center gap-3">
-               <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-500">@</div>
-               <p className="text-lg font-bold text-white tracking-tight">
-                 {formData.email || "Chargement..."}
-               </p>
-            </div>
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email</label>
+            <p className="text-xl font-bold text-white tracking-tight border-l-2 border-orange-500 pl-4 py-1">
+               {formData.email || "Chargement..."}
+            </p>
           </div>
         </div>
       </div>

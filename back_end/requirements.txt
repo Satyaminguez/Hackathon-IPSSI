@@ -16,3 +16,4 @@ pdf2image
 PyMuPDF
 pymongo==4.6.3
 dotenv
+httpx
