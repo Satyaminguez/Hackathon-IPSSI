@@ -73,12 +73,12 @@ services:
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
       AIRFLOW__WEBSERVER__SECRET_KEY: "hkt_secret_key_2026"
       AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth
-      MONGO_URI: mongodb+srv://kazadiabondance_db_user:gPuMLaiSdi7DcIuf@cluster0.rkvrqbg.mongodb.net/filemina
       _PIP_ADDITIONAL_REQUIREMENTS: "pymongo==4.7.2 python-dotenv requests faker reportlab Pillow PyMuPDF"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./dataset_generator:/opt/airflow/dataset_generator
+      - ./back_end:/opt/airflow/back_end
     ports:
       - "8080:8080"
     command: >
@@ -112,12 +112,12 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
       AIRFLOW__WEBSERVER__SECRET_KEY: "hkt_secret_key_2026"
-      MONGO_URI: mongodb+srv://kazadiabondance_db_user:gPuMLaiSdi7DcIuf@cluster0.rkvrqbg.mongodb.net/filemina
       _PIP_ADDITIONAL_REQUIREMENTS: "pymongo==4.7.2 python-dotenv requests faker reportlab Pillow PyMuPDF"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./dataset_generator:/opt/airflow/dataset_generator
+      - ./back_end:/opt/airflow/back_end
     command: >
       bash -c "
         airflow db migrate &&
@@ -141,10 +141,6 @@ services:
       mongodb:
         condition: service_healthy
     environment:
-      # ── Option 1 : MongoDB LOCAL ────────────────────────────────────────
-      MONGO_URI: mongodb+srv://kazadiabondance_db_user:gPuMLaiSdi7DcIuf@cluster0.rkvrqbg.mongodb.net/filemina
-      # ── Option 2 : MongoDB Atlas (commenter Option 1, décommenter ici) ─
-      # MONGO_URI: mongodb+srv://<user>:<password>@<cluster>.mongodb.net/hkt_db
       AIRFLOW_URL: http://airflow-webserver:8080
       AIRFLOW_USER: admin
       AIRFLOW_PASSWORD: admin
