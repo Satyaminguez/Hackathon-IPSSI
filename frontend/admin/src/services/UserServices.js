@@ -98,7 +98,7 @@ export default class UserServices {
     }
   }
 
-  async adminUpdateDocStatus(docId, status) {
+  async adminUpdateDocStatus(docId, status, reason = null) {
     const token = this._getToken();
     try {
       const response = await fetch(`${API_URL}/admin/documents/${docId}/status`, {
@@ -107,10 +107,46 @@ export default class UserServices {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, reason }),
       });
       if (!response.ok) throw new Error("Mise à jour statut impossible");
       return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async adminDeleteDocument(docId) {
+    const token = this._getToken();
+    try {
+      const response = await fetch(`${API_URL}/admin/documents/${docId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Erreur lors de la suppression du document");
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async adminViewDocument(docId) {
+    const token = this._getToken();
+    try {
+      const response = await fetch(`${API_URL}/admin/documents/${docId}/view`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Erreur lors de l'ouverture du document");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      // Optionnel : nettoyer l'URL après l'ouverture
+      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
     } catch (error) {
       throw error;
     }
