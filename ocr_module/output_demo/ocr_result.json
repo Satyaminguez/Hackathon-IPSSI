@@ -1,0 +1,27 @@
+{
+    "ocr": {
+        "success": true,
+        "pages": 1,
+        "avg_conf": 70.44339622641509,
+        "text": "FACTURE\nNumero : FAC-2025-6064 _35600000000048\nDate d'emission : 23/09/2025\nDate d'echeance : 22/11/2025\nFournisseur Client\nLA POSTE Rivière SA\nSIRET : 35600000000048 SIRET : 47765622225643\n9 RUE DU COLONEL PIERRE AVIA rue Joubert\n75015 PARIS 55273 Saint Juliendan\nArticles\nVerification de coherence inter-documents 2 212.03 EUR 424.06 EUR\nControle de conformite fournisseur 4 257.40 EUR 257.40 EUR\nVerification de coherence inter-documents Et 341.50 EUR 341.50 EUR\nIntegration dans l'outil metier 2 1072.00 EUR 2144.00 EUR\nTotal HT 3166.96 EUR\nTVA 20% 633.39 EUR\nTotal TTC 3800.35 EUR\n"
+    },
+    "extraction": {
+        "type": "facture",
+        "doc_id": "FAC-2025-6064_35600000000048",
+        "lot_id": "LOT-0001",
+        "fournisseur_siret": "35600000000048",
+        "fournisseur_nom": "LA POSTE",
+        "client_nom": "Rivière SA",
+        "client_siret": "47765622225643",
+        "iban": null,
+        "bic": null,
+        "date_emission": "23/09/2025",
+        "date_echeance": "22/11/2025",
+        "total_ht": 3166.96,
+        "tva": 633.39,
+        "total_ttc": 3800.35,
+        "chemin_fichier": "tests/samples/FAC-2025-6064_35600000000048.pdf",
+        "coherent": true,
+        "anomalie": null
+    }
+}
