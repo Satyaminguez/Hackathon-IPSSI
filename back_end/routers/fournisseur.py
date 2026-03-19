@@ -103,6 +103,14 @@ async def upload_documents(files: List[UploadFile] = File(...), current_user: di
             }
         })
 
+    # --- NOUVEAU : Déclenchement automatique du pipeline Airflow ---
+    # On délègue l'ingestion lourde à Airflow de manière asynchrone
+    from utils.airflow import trigger_dag
+    await trigger_dag("1_ocr_document_ingestion", {
+        "lot_id": lot_id_unique,
+        "email": current_user["email"]
+    })
+
     # 3. Réponse finale au Front-end résumant tout le lot
     return {
         "message": f"Traitement du lot terminé. {len(files)} document(s) analysé(s).",

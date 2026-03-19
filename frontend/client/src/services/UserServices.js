@@ -104,10 +104,15 @@ export default class UserServices {
 
   // --- Gestion Documentaire Client ---
 
-  async uploadDocument(file, category) {
+  async uploadDocument(files, category) {
     try {
       const formData = new FormData();
-      formData.append("files", file);
+      // Si c'est un seul fichier, on le met en tableau pour la boucle
+      const fileList = Array.isArray(files) ? files : [files];
+      
+      fileList.forEach(file => {
+        formData.append("files", file);
+      });
       formData.append("category", category);
 
       const response = await fetch(`${API_URL}/fournisseur/upload`, {

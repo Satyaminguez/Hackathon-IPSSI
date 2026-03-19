@@ -23,7 +23,7 @@ dag_ingestion = DAG(
     '1_ocr_document_ingestion',
     default_args=default_args,
     description="Pipeline d'ingestion des factures, extraction OCR Tesseract et nettoyage IA",
-    schedule_interval=None, # Déclenché manuellement via l'API (TriggerDagRunOperator)
+    schedule_interval=None, # Déclenché via API lors de l'Upload
     catchup=False,
     tags=['ingestion', 'ocr', 'raw_to_clean']
 )
@@ -33,9 +33,9 @@ def run_ocr_extraction(**context):
     Simulation de la tâche Airflow qui récupère le PDF brut (Raw Zone)
     et lance le processus d'Intelligence Artificielle OCR.
     """
-    dag_run_conf = context.get('dag_run').conf
-    document_id = dag_run_conf.get('document_id')
-    file_path = dag_run_conf.get('file_path')
+    dag_run_conf = context.get('dag_run').conf or {}
+    document_id = dag_run_conf.get('document_id', 'DOC-AUTO-404')
+    file_path = dag_run_conf.get('file_path', 'facture_auto.pdf')
     
     print(f"Lancement de l'extracteur OCR sur le fichier {file_path}")
     print("Moteur: Tesseract 5.0 | Algorithme IA de classification ...")
@@ -72,15 +72,21 @@ t2_conformite = PythonOperator(
     dag=dag_ingestion,
 )
 
-# 3. Tâche d'alerte (Envoi d'un mail au client via une API interne)
-# Confirmation que l'upload est en cours d'analyse
-t3_notify_client = SimpleHttpOperator(
+import time
+
+def mock_notify_client(**context):
+    dag_run_conf = context.get('dag_run').conf or {}
+    email = dag_run_conf.get('email', 'kazadiabondance50@gmail.com')
+    print(f"[API RESEND SIMULATION] Envoi d'un email de confirmation à {email}...")
+    time.sleep(2)
+    print("Email envoyé avec succès !")
+    return "Notification OK"
+
+# 3. Tâche d'alerte (Mock pour Hackathon)
+t3_notify_client = PythonOperator(
     task_id='task_notify_upload_success',
-    http_conn_id='notification_api', # Connexion configurée dans Airflow UI
-    endpoint='/api/internal/notify',
-    method='POST',
-    data="""{"user_email": "{{ dag_run.conf['email'] }}", "message": "Votre document est en cours de traitement IA."}""",
-    headers={"Content-Type": "application/json"},
+    python_callable=mock_notify_client,
+    provide_context=True,
     dag=dag_ingestion,
 )
 

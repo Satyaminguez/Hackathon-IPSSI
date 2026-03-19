@@ -117,11 +117,20 @@ async def update_doc_status(
     )
     
     # Envoi d'email 
+    actual_filename = doc.get("raw_zone", {}).get("filename", "Document")
     if update.status == "VERIFIE":
-        background_tasks.add_task(send_document_validated_email, doc.get("uploaded_by"), doc.get("filename", "Document inconnu"))
+        background_tasks.add_task(send_document_validated_email, doc.get("uploaded_by"), actual_filename)
     elif update.status == "REFUSE":
         reason = update.reason or "Votre document présente une non-conformité majeure après analyse manuelle."
-        background_tasks.add_task(send_document_rejected_email, doc.get("uploaded_by"), doc.get("filename", "Document inconnu"), reason)
+        background_tasks.add_task(send_document_rejected_email, doc.get("uploaded_by"), actual_filename, reason)
+    
+    # --- NOUVEAU : Déclenchement automatique du pipeline Airflow Validation ---
+    from utils.airflow import trigger_dag
+    background_tasks.add_task(trigger_dag, "2_document_validation_and_export", {
+        "document_id": doc_id,
+        "user_email": doc.get("uploaded_by"),
+        "status": update.status
+    })
         
     return {"message": f"Statut mis à jour : {update.status}"}
 
