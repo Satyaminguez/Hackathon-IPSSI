@@ -11,3 +11,5 @@ python-dotenv
 resend
 jinja2
 dnspython
+pymongo==4.6.3
+dotenv
