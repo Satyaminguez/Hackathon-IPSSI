@@ -1,9 +1,13 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status
+from fastapi.responses import FileResponse
 from security import get_current_user
 from models import ExtractedData, ValidationResult
 from services.validation_ia import validate_business_rules, check_cross_document_coherence
 from services.datalake import save_to_datalake
 from database import documents_collection 
+from bson import ObjectId
+import os
+from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/fournisseur", tags=["Espace Fournisseur"])
 
@@ -90,39 +94,122 @@ async def upload_document(file: UploadFile = File(...), current_user: dict = Dep
 @router.get("/dashboard")
 async def get_fournisseur_dashboard(current_user: dict = Depends(get_current_user)):
     """
-    API Dashboard Fournisseur : Statistiques personnelles de l'utilisateur connecté
+    API Dashboard Fournisseur enrichie avec données graphiques
     """
     user_email = current_user["email"]
     
+    # 1. KPIs de base
     total_docs = await documents_collection.count_documents({"uploaded_by": user_email})
-    docs_valides = await documents_collection.count_documents({
+    docs_verifies = await documents_collection.count_documents({
         "uploaded_by": user_email, 
-        "curated_zone.status_final": "VALIDE"
+        "curated_zone.status_final": "VERIFIE"
     })
-    docs_anomalies = await documents_collection.count_documents({
+    docs_attente = await documents_collection.count_documents({
         "uploaded_by": user_email, 
-        "curated_zone.status_final": "A_VERIFIER"
+        "curated_zone.status_final": "EN_ATTENTE"
     })
-    
 
-    cursor = documents_collection.find({"uploaded_by": user_email}).sort("upload_date", -1).limit(5)
-    derniers_docs = await cursor.to_list(length=5)
-    
-
-    recent_docs_list = []
-    for doc in derniers_docs:
-        recent_docs_list.append({
-            "id": doc.get("document_id", str(doc["_id"])),
-            "nom_fichier": doc["raw_zone"]["filename"],
-            "date": doc["upload_date"],
-            "statut": doc["curated_zone"]["status_final"]
+    # 2. Évolution sur 7 jours (Line Chart)
+    evolution_docs = []
+    for i in range(6, -1, -1):
+        date = (datetime.now() - timedelta(days=i)).date()
+        date_str = date.isoformat()
+        # On cherche les docs dont la date commence par ce jour
+        count = await documents_collection.count_documents({
+            "uploaded_by": user_email,
+            "upload_date": {"$regex": f"^{date_str}"}
         })
+        evolution_docs.append({"name": date.strftime("%a"), "docs": count})
+
+    # 3. Répartition par type (Doughnut Chart)
+    pipeline = [
+        {"$match": {"uploaded_by": user_email}},
+        {"$group": {"_id": "$curated_zone.document_type", "count": {"$sum": 1}}}
+    ]
+    cursor_repart = documents_collection.aggregate(pipeline)
+    repartition_data = []
+    async for item in cursor_repart:
+        label = item["_id"] if item["_id"] else "Inconnu"
+        repartition_data.append({"name": label.capitalize(), "value": item["count"]})
+
+    # 4. Activité récente
+    cursor = documents_collection.find({"uploaded_by": user_email}).sort("upload_date", -1).limit(5)
+    derniers_docs_raw = await cursor.to_list(length=5)
+    recent_docs_list = [
+        {
+            "id": str(doc["_id"]),
+            "nom_fichier": doc.get("raw_zone", {}).get("filename", "Sans nom"),
+            "type": doc.get("curated_zone", {}).get("document_type", "Inconnu"),
+            "date": doc.get("upload_date"),
+            "statut": doc.get("curated_zone", {}).get("status_final", "EN_ATTENTE")
+        } for doc in derniers_docs_raw
+    ]
     
     return {
         "statistiques": {
             "total_envoyes": total_docs,
-            "valides": docs_valides,
-            "en_attente_ou_anomalie": docs_anomalies
+            "verifies": docs_verifies,
+            "en_attente": docs_attente,
+            "taux_precision": "99.8%" # Mock pour le style
+        },
+        "graphiques": {
+            "evolution": evolution_docs,
+            "repartition": repartition_data
         },
         "derniers_documents": recent_docs_list
     }
+
+@router.get("/documents")
+async def get_my_documents(current_user: dict = Depends(get_current_user)):
+    """
+    Retourne la liste complète des documents importés par l'utilisateur connecté
+    """
+    user_email = current_user["email"]
+    cursor = documents_collection.find({"uploaded_by": user_email}).sort("upload_date", -1)
+    docs = await cursor.to_list(length=100)
+    
+    return [
+        {
+            "id": str(doc["_id"]),
+            "document_id": doc.get("document_id"),
+            "nom_fichier": doc.get("raw_zone", {}).get("filename", "Sans nom"),
+            "type": doc.get("curated_zone", {}).get("document_type", "Inconnu"),
+            "date": doc.get("upload_date"),
+            "statut": doc.get("curated_zone", {}).get("status_final", "EN_ATTENTE"),
+            "details": doc.get("curated_zone", {}).get("details", {})
+        }
+        for doc in docs
+    ]
+
+@router.delete("/documents/{doc_id}")
+async def delete_document(doc_id: str, current_user: dict = Depends(get_current_user)):
+    """Supprime un document appartenant à l'utilisateur connecté"""
+    user_email = current_user["email"]
+    try:
+        obj_id = ObjectId(doc_id)
+    except:
+        raise HTTPException(status_code=400, detail="ID de document invalide")
+        
+    result = await documents_collection.delete_one({"_id": obj_id, "uploaded_by": user_email})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Document non trouvé ou accès refusé")
+    return {"message": "Document supprimé avec succès"}
+
+@router.get("/documents/{doc_id}/view")
+async def view_document(doc_id: str, current_user: dict = Depends(get_current_user)):
+    """Visualiser un document (Stream PDF/Image)"""
+    user_email = current_user["email"]
+    try:
+        obj_id = ObjectId(doc_id)
+    except:
+        raise HTTPException(status_code=400, detail="ID invalide")
+
+    doc = await documents_collection.find_one({"_id": obj_id, "uploaded_by": user_email})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document non trouvé")
+    
+    file_path = doc.get("raw_zone", {}).get("physical_path")
+    if not file_path or not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Fichier introuvable sur le disque")
+    
+    return FileResponse(file_path)
