@@ -39,6 +39,7 @@ class TokenData(BaseModel):
 class ExtractedData(BaseModel):
     type: str  
     doc_id: str
+    lot_id: str = None
     fournisseur_siret: str
     fournisseur_nom: str
     date_emission: str

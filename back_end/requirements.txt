@@ -11,3 +11,6 @@ python-dotenv
 resend
 jinja2
 dnspython
+resend
+pdf2image
+PyMuPDF
