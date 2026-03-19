@@ -11,7 +11,7 @@ export default function Navbar() {
     return (
         <nav className="fixed w-full bg-gray-800 px-6 py-4 flex items-center justify-between border-b border-b-slate-400">
             <Link to="/dashboard">
-                <h1 className="text-teal-600 text-2xl font-bold">
+                <h1 className="text-orange-600 text-2xl font-bold">
                     <i className="fa-solid fa-file mx-1"></i>
                     Filemina
                 </h1>

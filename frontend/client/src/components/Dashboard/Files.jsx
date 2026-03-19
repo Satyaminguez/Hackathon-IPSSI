@@ -53,9 +53,11 @@ const FileItem = ({ id, name, type, date, statut, onDelete, onView }) => (
       <span className={`text-[10px] font-bold px-3 py-1 rounded-full border ${
         statut === "VERIFIE" 
           ? "bg-teal-500/10 text-teal-400 border-teal-500/20" 
-          : "bg-amber-500/10 text-amber-500 border-amber-500/20"
+          : statut === "REFUSE"
+            ? "bg-red-500/10 text-red-400 border-red-500/20"
+            : "bg-amber-500/10 text-amber-500 border-amber-500/20"
       }`}>
-        {statut === "VERIFIE" ? "Vérifié" : "En attente"}
+        {statut === "VERIFIE" ? "Vérifié" : statut === "REFUSE" ? "Refusé" : "En attente"}
       </span>
       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button 
@@ -78,7 +80,7 @@ export default function Files() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [docToDelete, setDocToDelete] = useState(null);
@@ -104,24 +106,24 @@ export default function Files() {
   }, []);
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+    if (e.target.files) {
+      setSelectedFiles(Array.from(e.target.files));
     }
   };
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!selectedFile || !selectedCategory) {
-      toast.warning("Veuillez sélectionner un fichier et une catégorie");
+    if (selectedFiles.length === 0) {
+      toast.warning("Veuillez sélectionner au moins un fichier");
       return;
     }
 
     try {
       setUploading(true);
-      await userServices.uploadDocument(selectedFile, selectedCategory);
-      toast.success("Document envoyé avec succès !");
+      await userServices.uploadDocument(selectedFiles, "Document Administrateur");
+      toast.success(`${selectedFiles.length} document(s) envoyé(s) avec succès !`);
       setIsDrawerOpen(false);
-      setSelectedFile(null);
+      setSelectedFiles([]);
       setSelectedCategory("");
       fetchFiles();
     } catch (error) {
@@ -208,39 +210,30 @@ export default function Files() {
       <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
         <form className="space-y-8" onSubmit={handleUpload}>
           <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Catégorie du document</label>
-            <select 
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg py-3.5 px-4 text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all cursor-pointer"
-            >
-              <option value="">-- Choisir une catégorie --</option>
-              {categories.map((cat, i) => (
-                <option key={i} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
             <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Fichiers à uploader</label>
             <input 
               type="file" 
+              multiple
               className="hidden" 
               ref={fileInputRef} 
               onChange={handleFileChange}
             />
             <div 
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed ${selectedFile ? 'border-teal-500 bg-teal-500/5' : 'border-slate-800'} rounded-lg p-10 text-center hover:border-teal-500 hover:bg-teal-500/5 transition-all group cursor-pointer`}
+              className={`border-2 border-dashed ${selectedFiles.length > 0 ? 'border-teal-500 bg-teal-500/5' : 'border-slate-800'} rounded-lg p-10 text-center hover:border-teal-500 hover:bg-teal-500/5 transition-all group cursor-pointer`}
             >
               <div className="w-16 h-16 bg-slate-800 rounded-lg flex items-center justify-center mx-auto mb-4 border border-slate-700 group-hover:border-teal-500/30 transition-all">
                 <Upload className="text-slate-500 group-hover:text-teal-400 transition-colors" size={32} />
               </div>
               <p className="text-sm font-bold text-white mb-1">
-                {selectedFile ? selectedFile.name : "Cliquez pour télécharger"}
+                {selectedFiles.length > 0 
+                  ? selectedFiles.length === 1 ? selectedFiles[0].name : `${selectedFiles.length} fichiers sélectionnés` 
+                  : "Cliquez pour télécharger"}
               </p>
               <p className="text-xs text-slate-500">
-                {selectedFile ? `${(selectedFile.size / 1024).toFixed(0)} KB` : "ou glissez un fichier ici"}
+                {selectedFiles.length > 0 
+                  ? `${(selectedFiles.reduce((acc, f) => acc + f.size, 0) / 1024).toFixed(0)} KB au total` 
+                  : "ou glissez vos fichiers ici"}
               </p>
             </div>
           </div>
@@ -250,7 +243,7 @@ export default function Files() {
             disabled={uploading}
             className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-bold py-4 rounded-lg transition-all active:scale-[0.98] mt-10 flex items-center justify-center gap-2 cursor-pointer"
           >
-            {uploading ? <Loader2 className="animate-spin" size={20} /> : "Envoyer le document"}
+            {uploading ? <Loader2 className="animate-spin" size={20} /> : `Envoyer ${selectedFiles.length > 1 ? `les ${selectedFiles.length} documents` : "le document"}`}
           </button>
         </form>
       </Drawer>

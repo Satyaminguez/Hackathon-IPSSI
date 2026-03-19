@@ -83,12 +83,12 @@ export default function Login() {
                 Email
               </label>
               <div className="relative group">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-orange-400 transition-colors" size={18} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full bg-slate-950 border ${errors.email ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                  className={`w-full bg-slate-950 border ${errors.email ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none`}
                   placeholder="admin@entreprise.com"
                 />
               </div>
@@ -100,17 +100,17 @@ export default function Login() {
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   Mot de passe
                 </label>
-                <Link to="/forgot" className="text-xs font-bold text-teal-400 hover:text-teal-300 transition-colors">
+                <Link to="/forgot" className="text-xs font-bold text-orange-400 hover:text-orange-300 transition-colors">
                   Mot de passe oublié ?
                 </Link>
               </div>
               <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-teal-400 transition-colors" size={18} />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-orange-400 transition-colors" size={18} />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full bg-slate-950 border ${errors.password ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all outline-none`}
+                  className={`w-full bg-slate-950 border ${errors.password ? 'border-red-500' : 'border-slate-800'} rounded-md py-3 pl-10 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none`}
                   placeholder="••••••••"
                 />
                 <button
@@ -127,7 +127,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-semibold py-3 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full bg-orange-600 hover:bg-orange-500 disabled:bg-orange-800 text-white font-semibold py-3 rounded-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? "..." : "Se connecter"}
             </button>
@@ -136,7 +136,7 @@ export default function Login() {
           <div className="mt-8 pt-6 border-t border-slate-800 text-center">
             <p className="text-slate-500 text-sm">
               Nouveau client ?{" "}
-              <Link to="/register" className="text-teal-400 font-bold hover:text-teal-300 transition-colors">
+              <Link to="/register" className="text-orange-400 font-bold hover:text-orange-300 transition-colors">
                 Créer son compte
               </Link>
             </p>

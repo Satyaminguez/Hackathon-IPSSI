@@ -12,7 +12,7 @@ const ClientDrawer = ({ isOpen, onClose, clientData, onUpdateStatus }) => (
       <div className="p-8 border-b border-white/5 flex justify-between items-center">
         <div>
           <h2 className="text-xl font-bold text-white tracking-tight">Détails Client</h2>
-          <p className="text-[10px] text-teal-400 font-bold uppercase tracking-widest mt-1">{clientData?.profile?.email}</p>
+          <p className="text-[10px] text-orange-400 font-bold uppercase tracking-widest mt-1">{clientData?.profile?.email}</p>
         </div>
         <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full text-slate-400 hover:text-white transition-colors">
           <X size={24} />
@@ -50,7 +50,7 @@ const ClientDrawer = ({ isOpen, onClose, clientData, onUpdateStatus }) => (
           </div>
           <div className="space-y-3">
             {clientData?.documents?.map((doc) => (
-              <div key={doc._id} className="p-4 bg-white/5 border border-white/10 rounded-lg flex justify-between items-center group hover:border-teal-500/30 transition-all">
+              <div key={doc._id} className="p-4 bg-white/5 border border-white/10 rounded-lg flex justify-between items-center group hover:border-orange-500/30 transition-all">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-slate-900 rounded-lg">
                     <FileText size={18} className="text-slate-400" />
@@ -61,13 +61,13 @@ const ClientDrawer = ({ isOpen, onClose, clientData, onUpdateStatus }) => (
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                   <span className={`text-[8px] font-bold px-2.5 py-1 rounded-full border ${doc.curated_zone?.status_final === 'VERIFIE' ? 'bg-teal-500/10 text-teal-500 border-teal-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
+                   <span className={`text-[8px] font-bold px-2.5 py-1 rounded-full border ${doc.curated_zone?.status_final === 'VERIFIE' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
                       {doc.curated_zone?.status_final === 'VERIFIE' ? 'Vérifié' : 'En attente'}
                    </span>
                    {doc.curated_zone?.status_final === 'EN_ATTENTE' && (
                      <button 
                         onClick={() => onUpdateStatus(doc._id, 'VERIFIE')}
-                        className="p-1.5 bg-teal-500/10 text-teal-400 rounded-lg border border-teal-500/20 hover:bg-teal-500 hover:text-white transition-all scale-100 active:scale-95"
+                        className="p-1.5 bg-orange-500/10 text-orange-400 rounded-lg border border-orange-500/20 hover:bg-orange-500 hover:text-white transition-all scale-100 active:scale-95"
                         title="Valider ce document"
                      >
                        <CheckCircle size={14} />
@@ -163,11 +163,11 @@ const Clients = () => {
                 <tr key={client._id} className="hover:bg-white/[0.02] transition-all group">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-500/20 to-indigo-500/20 flex items-center justify-center text-teal-400 font-bold border border-white/10">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500/20 to-indigo-500/20 flex items-center justify-center text-orange-400 font-bold border border-white/10">
                         {client.nom_entreprise?.[0] || 'C'}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white group-hover:text-teal-400 transition-colors uppercase tracking-tight">{client.nom_entreprise}</p>
+                        <p className="text-sm font-bold text-white group-hover:text-orange-400 transition-colors uppercase tracking-tight">{client.nom_entreprise}</p>
                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{client.prenom} {client.nom}</p>
                       </div>
                     </div>
@@ -193,7 +193,7 @@ const Clients = () => {
                   <td className="px-8 py-6 text-right">
                     <button 
                       onClick={() => handleViewDetails(client)}
-                      className="px-4 py-2 bg-white/5 text-white text-[10px] font-bold uppercase rounded-lg border border-white/10 hover:bg-white/10 hover:border-teal-500/50 transition-all active:scale-95"
+                      className="px-4 py-2 bg-white/5 text-white text-[10px] font-bold uppercase rounded-lg border border-white/10 hover:bg-white/10 hover:border-orange-500/50 transition-all active:scale-95"
                     >
                       Voir le dossier
                     </button>

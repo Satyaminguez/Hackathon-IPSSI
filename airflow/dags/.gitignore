@@ -1,0 +1,7 @@
+__pycache__*
+*.txt
+*.pyc
+*.pyo
+*.pyd
+airflow_logs*
+*.log
